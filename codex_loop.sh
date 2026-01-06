@@ -316,7 +316,7 @@ execute_codex() {
     log_status "INFO" "⏳ Starting Codex execution... (timeout: ${CLAUDE_TIMEOUT_MINUTES}m)"
     
     # Execute Codex with the prompt, streaming output
-    if timeout ${timeout_seconds}s $CODEX_CMD "$(cat $PROMPT_FILE)" > "$output_file" 2>&1 & 
+    if gtimeout ${timeout_seconds}s $CODEX_CMD "$(cat $PROMPT_FILE)" > "$output_file" 2>&1 & 
     then
         local codex_pid=$!
         local progress_counter=0
