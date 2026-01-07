@@ -1,70 +1,105 @@
-# Codex Ralph
+# Ralph for Codex
 
-> **Fork of [ralph-claude-code](https://github.com/frankbria/ralph-claude-code) adapted for OpenAI Codex CLI**
+A simple implementation of [Geoff Huntley's Ralph Wiggum technique](https://ghuntley.com/ralph/) for OpenAI Codex CLI.
 
-Autonomous AI development loop with intelligent exit detection and rate limiting, using OpenAI's Codex CLI instead of Claude Code.
+> "The point is not the 5-line bash loop. The point is **dumb things can work surprisingly well**."
 
-## What's Different
+## Philosophy
 
-This fork replaces Claude Code with Codex CLI:
-- Uses `codex exec` for non-interactive execution
-- Same loop logic, rate limiting, and circuit breaker
-- Same PRD-based workflow
+1. **Specs determine quality** - Spend 80% of your time on PROMPT.md
+2. **Don't babysit** - Let it run for hours
+3. **Delete failures** - Don't debug garbage, re-spec instead
+4. **Keep it simple** - The loop is nothing, the specs are everything
 
-## Quick Start
-
-### Install
+## Install
 
 ```bash
-git clone https://github.com/alejandroopi/ralph-codex.git
+git clone https://github.com/alejandroOPI/ralph-codex
 cd ralph-codex
 ./install.sh
 ```
 
-This adds `codex-ralph`, `codex-monitor`, and `codex-ralph-setup` commands to your PATH.
+## Usage
 
-### Create a Project
-
+### Create a new project
 ```bash
 codex-ralph-setup my-project
 cd my-project
 ```
 
-### Run the Loop
+### Edit PROMPT.md
+Write declarative specs. Describe the **desired end state**, not a todo list.
 
+### Run Ralph
 ```bash
-codex-ralph --monitor    # With tmux monitoring
-codex-ralph              # Without monitoring
+# Default: 30 min timeout, 100 loops max
+codex-ralph
+
+# Long-running project
+codex-ralph --timeout 120  # 2 hour timeout per loop
+
+# Overnight run
+codex-ralph --timeout 480 --loops 20  # 8 hours, 20 loops
 ```
 
-## Features
+### Completion Signals
 
-- **Autonomous Loop** - Runs Codex until task is complete
-- **Rate Limiting** - 100 calls/hour (configurable)
-- **Circuit Breaker** - Stops on stuck loops or errors
-- **Exit Detection** - Knows when project is done
-- **tmux Monitoring** - Live dashboard
+Your PROMPT.md should instruct Codex to output:
+- `RALPH_DONE` - when all acceptance criteria are met
+- `RALPH_STUCK: [reason]` - if it cannot proceed
 
-## Configuration
+Ralph will automatically stop when it sees these signals.
 
-Edit `PROMPT.md` in your project with your requirements.
+## PROMPT.md Template
 
-Options:
-```bash
-codex-ralph --calls 50        # Set max calls per hour
-codex-ralph --timeout 30      # 30 min timeout per execution
-codex-ralph --verbose         # Detailed progress
-codex-ralph --reset-circuit   # Reset circuit breaker
+```markdown
+# Project: [NAME]
+
+## Desired End State
+[What does the finished product look like?]
+
+## Technical Requirements
+- Language/Framework: X
+- Dependencies: only essential ones
+- Target: browser/node/etc
+
+## Files to Create
+- file1.js - purpose
+- file2.css - purpose
+
+## Acceptance Criteria
+- [ ] Criteria 1
+- [ ] Criteria 2
+
+## Completion Signal
+When ALL criteria are met, output: RALPH_DONE
+If stuck, output: RALPH_STUCK: [reason]
 ```
 
-## Requirements
+## Tips
 
-- Codex CLI (`codex`)
-- jq
-- tmux (for monitoring)
-- git
+- **Be specific** in your specs - vague specs = vague results
+- **Include examples** of expected behavior
+- **List constraints** explicitly (no deps, no external APIs, etc)
+- **Test acceptance criteria** are measurable
 
-## Credits
+## When to Use Ralph
 
-Original: [frankbria/ralph-claude-code](https://github.com/frankbria/ralph-claude-code)
-Technique: [Geoffrey Huntley's Ralph Wiggum](https://ghuntley.com/ralph/)
+✅ Greenfield projects with clear specs  
+✅ Large refactors with defined standards  
+✅ Overnight autonomous work  
+✅ Spec-driven development  
+
+❌ Exploration/iteration  
+❌ Unclear requirements  
+❌ Quick fixes  
+
+## Based On
+
+- [Ralph Wiggum Technique](https://ghuntley.com/ralph/) by Geoff Huntley
+- [A Brief History of Ralph](https://www.humanlayer.dev/blog/brief-history-of-ralph) by HumanLayer
+- [Cursed Lang](https://cursed-lang.org/) - a language built by Ralph
+
+## License
+
+MIT
