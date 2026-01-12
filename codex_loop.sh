@@ -63,6 +63,7 @@ for i in $(seq 1 $MAX_LOOPS); do
   fi
   
   $TIMEOUT_CMD ${TIMEOUT_MINS}m codex exec --skip-git-repo-check --full-auto \
+    -m "${CODEX_MODEL:-codex-5.2}" \
     "$(cat $PROMPT_FILE)" 2>&1 | tee "$LOGFILE"
   
   EXIT_CODE=${PIPESTATUS[0]}
